@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using MockR.Dtos;
-using MockR.Entities;
 using MockR.Request;
 using MockR.Service;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -57,6 +54,7 @@ namespace MockR
                 border: none;
                 background-color: #5B58E6;
                 color: white;
+                cursor: pointer;
             }}
 
             .method.GET
@@ -138,13 +136,17 @@ namespace MockR
             </table>
         </form>
         <div class=""items"">
-            [CONTENT]
+            <table cellspacing=""0"" cellspadding=""0"" border=""0"" width=""100%"">
+                [CONTENT]
+            </table>
         </div>
     </body>
 </html>
 ";
                 string items = string.Empty;
 
+                
+                
                 service.GetAll().ForEach(x => {
                     items += RenderControl(x);
                 });
@@ -163,19 +165,17 @@ namespace MockR
         }
 
         private string RenderControl(PageDto dto) => @$"
-<form action=""/mockr"" method=""POST"" enctype=""application/x-www-form-urlencoded"">
-    <div class=""item"">
-        <input type=""hidden"" name=""Method"" id=""Method"" value=""DELETE"" /> 
-        <input type=""hidden"" name=""Id"" id=""Id"" value=""{dto.Id}"" /> 
-        <table cellspacing=""0"" cellspadding=""0"" border=""0"" width=""100%"">
             <tr>
                 <td align=""center""><span class=""method {dto.Method}"">{dto.Method}</span></td>
-                <td align=""left""><a href=""{dto.AbsolutePath}"" target=""_blank"">{dto.AbsolutePath}</a></td>
-                <td align=""right""><input type=""submit"" value=""Eliminar"" class=""btn"" /> </td>
+                <td align=""left""><a href=""{dto.AbsolutePath}"" target=""_blank"">{dto.AbsolutePathReduced}</a></td>
+                <td align=""right"">
+                    <form action=""/mockr"" method=""POST"" enctype=""application/x-www-form-urlencoded"">
+                        <input type=""hidden"" name=""Method"" id=""Method"" value=""DELETE"" /> 
+                        <input type=""hidden"" name=""Id"" id=""Id"" value=""{dto.Id}"" /> 
+                        <input type=""submit"" value=""Eliminar"" class=""btn"" /> 
+                    </form>        
+                </td>
             </tr>
-        </table>
-    </div>
-</form>        
         ";
         
 
@@ -187,7 +187,7 @@ namespace MockR
 
                 if (method == "DELETE") 
                 {
-                    int id = Convert.ToInt32(context.Request.Form["Id"]);
+                    Guid id = Guid.Parse(context.Request.Form["Id"]);
                     service.Delete(id);
                     context.Response.Redirect("/mockr");
                 }

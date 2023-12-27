@@ -3,6 +3,7 @@ using MockR.Dtos;
 using MockR.Entities;
 using MockR.Request;
 using MockR.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,13 +22,14 @@ namespace MockR.Service
         {
             _repository.Create(new Page()
             {
+                Id = Guid.NewGuid(),
                 Method = page.Method,
                 AbsolutePath = page.AbsolutePath,
                 Body = page.Body,
             });
         }
 
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
             _repository.Delete(id);
         }
@@ -64,15 +66,5 @@ namespace MockR.Service
             return dto;
         }
 
-        public void Update(UpdateRequest page)
-        {
-            _repository.Update(new Page()
-            {
-                Id= page.Id,
-                Method = page.Method,
-                AbsolutePath = page.AbsolutePath,
-                Body = page.Body
-            });
-        }
     }
 }

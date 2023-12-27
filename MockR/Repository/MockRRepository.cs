@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MockR.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,38 +8,29 @@ namespace MockR.Services
 {
     public class MockRRepository : IMockRRepository
     {
-        private readonly CacheDbContext _context;
-        public MockRRepository(CacheDbContext context) 
+        private readonly MockRDbContext _context;
+        public MockRRepository(MockRDbContext context) 
         {
             _context = context;
         }
         public void Create(Page page)
         {
-            _context.Pages.Add(page);
-            _context.SaveChanges();
+            _context.Create(page);
         }
 
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
-            Page? page = _context.Pages.Find(id);
-
-            if (page != null)
-            {
-                _context.Pages.Remove(page);
-                _context.SaveChanges();
-            }
+            _context.Delete(id);
         }
 
-        public List<Page> GetAll() => _context.Pages.ToList();
+        public List<Page> GetAll() 
+        {
+            List<Page> result = _context.Pages.ToList();
+            return result;
+        }
 
         public Page? GetBy(PathString absolutePath, string method)
             => _context.Pages.FirstOrDefault(p=> p.AbsolutePath == absolutePath && p.Method == method);
-        
 
-        public void Update(Page page)
-        {
-            _context.Pages.Update(page);
-            _context.SaveChanges();
-        }
     }
 }

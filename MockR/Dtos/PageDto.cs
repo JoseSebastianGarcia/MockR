@@ -8,9 +8,23 @@ namespace MockR.Dtos
 {
     public class PageDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string AbsolutePath { set; get; } = null!;
         public string Method { set; get; } = null!;
         public string Body { set; get; } = null!;
+        public string AbsolutePathReduced 
+        {
+            get 
+            {
+                string result = string.Empty;
+
+                if (AbsolutePath.Length > 17)
+                    result = $"{AbsolutePath.Substring(1, 17)}...";
+                else
+                    result = AbsolutePath;
+
+                return result;
+            }
+        }
     }
 }
